@@ -1,22 +1,24 @@
 //your variable declarations here
 SpaceShip usagi = new SpaceShip();
-Rockets pew = new Rockets();
+Rockets vroom = new Rockets();
 boolean w = false;
 boolean s = false;
 boolean a = false;
 boolean d = false;
-Asteroid[] petRock;
+//Asteroid[] petRock;
+ArrayList<Asteroid> petRock = new ArrayList<Asteroid>();
 Star[] charloot;
 public void setup() 
 {
   size(512,512);
+  petRock = new ArrayList <Asteroid>();
   charloot = new Star[200];
-  petRock = new Asteroid[4];
+  //petRock = new Asteroid[4];
   for(int i=0;i<charloot.length;i++) {
     charloot[i] = new Star();
   }
-  for(int i=0;i<petRock.length;i++) {
-    petRock[i] = new Asteroid();
+  for(int i=0;i<5;i++) {
+    petRock.add(new Asteroid());
   }
 }
 public void draw() 
@@ -24,37 +26,41 @@ public void draw()
   background(0);
   noFill();
   usagi.move();
-  pew.move();
+  vroom.move();
   usagi.show();
 
   stroke(255);
   for(int i=0;i<charloot.length;i++) {
     charloot[i].show();
   }
-  for(int i=0;i<petRock.length;i++) {
-    petRock[i].show();
-    petRock[i].move();
-  }
   stroke(0);
+  for(int i=0;i<petRock.size();i++)   {
+    petRock.get(i).show();
+    petRock.get(i).move();
+    if(dist(petRock.get(i).getX(),petRock.get(i).getY(),usagi.getX(),usagi.getY()) < 20) {
+      petRock.remove(i);
+      System.out.println(petRock.size());
+    }
+  }
 }
 public void keyPressed() {
   if (w==true && a==true) {
     usagi.accelerate(0.1);
     usagi.rotate(-5);
-    pew.show();
+    vroom.show();
   }
   if (w==true && d==true) {
     usagi.accelerate(0.1);
     usagi.rotate(5);
-    pew.show();
+    vroom.show();
   }
   if (key == 'w') {
     w=true;
     usagi.accelerate(0.1);
-    pew.show();
+    vroom.show();
   } else if (key == 's') {
     s=true;
-    usagi.accelerate(-0.1);
+    usagi.accelerate(-0.08);
   }
   if (key == 'a') {
     a=true;
@@ -69,11 +75,11 @@ public void keyPressed() {
     usagi.setPointDirection((int)(Math.random()*360));
     usagi.setDirectionX(0);
     usagi.setDirectionY(0);
-    pew.setX(usagi.getX());
-    pew.setY(usagi.getY());
-    pew.setPointDirection((int)usagi.getPointDirection());
-    pew.setDirectionX(0);
-    pew.setDirectionY(0);
+    vroom.setX(usagi.getX());
+    vroom.setY(usagi.getY());
+    vroom.setPointDirection((int)usagi.getPointDirection());
+    vroom.setDirectionX(0);
+    vroom.setDirectionY(0);
     for(int i=0;i<charloot.length;i++) {
     charloot[i] = new Star();
     }
@@ -208,8 +214,8 @@ class Asteroid extends Floater
   myColor = 255;
   myCenterX = Math.random()*512;
   myCenterY = Math.random()*512;
-  myDirectionX = Math.random()*1.5;
-  myDirectionY = Math.random()*1.5;
+  myDirectionX = Math.random()*3-1.5;
+  myDirectionY = Math.random()*3-1.5;
   myPointDirection = Math.random()*2*PI;
   rotSpeed = (int)(Math.random()*10);
   }
