@@ -5,19 +5,21 @@ boolean w = false;
 boolean s = false;
 boolean a = false;
 boolean d = false;
-//Asteroid[] petRock;
+boolean q = false;
+int rand = 0;
 ArrayList<Asteroid> petRock = new ArrayList<Asteroid>();
+ArrayList<Bullet> pointless = new ArrayList<Bullet>();
+//Bullet pointless = new Bullet(usagi);
 Star[] charloot;
 public void setup() 
 {
   size(512,512);
   petRock = new ArrayList <Asteroid>();
   charloot = new Star[200];
-  //petRock = new Asteroid[4];
   for(int i=0;i<charloot.length;i++) {
     charloot[i] = new Star();
   }
-  for(int i=0;i<5;i++) {
+  for(int i=0;i<10;i++) {
     petRock.add(new Asteroid());
   }
 }
@@ -25,6 +27,21 @@ public void draw()
 {
   background(0);
   noFill();
+  //if (pointless.size() > 0) {
+    for (int i=0; i<pointless.size();i++) {
+      pointless.get(i).move();
+      pointless.get(i).show();
+    }
+    for (int j=0; j<petRock.size();j++) {
+      for (int i=0; i<pointless.size();i++) {
+        if(dist(petRock.get(j).getX(),petRock.get(j).getY(),pointless.get(i).getX(),pointless.get(i).getY()) < 15) {
+          pointless.remove(i);
+          petRock.remove(j);
+          break;
+        }
+      }
+    }
+  //}
   usagi.move();
   vroom.move();
   usagi.show();
@@ -39,7 +56,13 @@ public void draw()
     petRock.get(i).move();
     if(dist(petRock.get(i).getX(),petRock.get(i).getY(),usagi.getX(),usagi.getY()) < 20) {
       petRock.remove(i);
-      System.out.println(petRock.size());
+      petRock.add(new Asteroid());
+      rand = (int)(Math.random()*10);
+      if(rand<2){
+        petRock.add(new Asteroid());
+        System.out.println(petRock.size());
+      }
+      
     }
   }
 }
@@ -69,6 +92,10 @@ public void keyPressed() {
     d=true;
     usagi.rotate(5);
   }
+  if (key == 'q') {
+    q=true;
+    pointless.add(new Bullet(usagi));
+  }
   if (key == 'x'||(Math.abs(usagi.getDirectionX())>=30||Math.abs(usagi.getDirectionY())>=30)) {
     usagi.setX((int)(Math.random()*512));
     usagi.setY((int)(Math.random()*512));
@@ -95,6 +122,9 @@ public void keyReleased() {
     a=false;
   } else if (key == 'd') {
     d=false;
+  }
+  if (key == 'q') {
+    q=false;
   }
 }
 class SpaceShip extends Floater  
@@ -253,6 +283,36 @@ class Asteroid extends Floater
   public double getDirectionY(){return myDirectionY;}
   public void setPointDirection(int degrees){myPointDirection=degrees;}
   public double getPointDirection(){return myPointDirection;}  
+}
+class Bullet extends Floater
+{
+  double myCenterX, myCenterY, myPointDirection, dRadians, myDirectionX, myDirectionY;
+  Bullet(SpaceShip theShip) {
+    myCenterX = theShip.getX();
+    myCenterY = theShip.getY();
+    myPointDirection = theShip.getPointDirection();
+    dRadians = myPointDirection*(Math.PI/180);
+    myDirectionX = 5 * Math.cos(dRadians) + theShip.getDirectionX();
+    myDirectionY = 5 * Math.sin(dRadians) + theShip.getDirectionY();
+  }
+  public void show() {
+    ellipse((int)(myCenterX), (int)(myCenterY), 5, 5);
+  }
+  public void move() {
+    myCenterX += myDirectionX;
+    myCenterY += myDirectionY;
+  }
+
+  public void setX(int x){myCenterX=x;}
+  public int getX(){return (int)myCenterX;}  
+  public void setY(int y){myCenterY=y;}  
+  public int getY(){return (int)myCenterY;}  
+  public void setDirectionX(double x){myDirectionX=x;}  
+  public double getDirectionX(){return myDirectionX;}
+  public void setDirectionY(double y){myDirectionY=y;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int degrees){myPointDirection=degrees;}
+  public double getPointDirection(){return myPointDirection;}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
