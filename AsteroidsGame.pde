@@ -57,6 +57,7 @@ public void draw()
     if(dist(petRock.get(i).getX(),petRock.get(i).getY(),usagi.getX(),usagi.getY()) < 20) {
       petRock.remove(i);
       petRock.add(new Asteroid());
+      petRock.add(new Asteroid());
       rand = (int)(Math.random()*10);
       if(rand<2){
         petRock.add(new Asteroid());
